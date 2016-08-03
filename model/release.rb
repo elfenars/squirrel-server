@@ -8,11 +8,23 @@ module Squirrel
 
       @@releases = []
 
-      def self.load(file)
-        @@releases = JSON.parse(File.read(file)).map do |json_release|
+      def self.load(releases_file)
+        @releases_json = []
+
+        @@releases = JSON.parse(get_releases(releases_file)).map do |json_release|
+          @releases_json.push json_release
           new(json_release)
         end
+
         @@releases.sort!
+      end
+
+      def self.get_releases(releases_file)
+        if releases_file.is_a? URI
+          Net::HTTP.get(releases_file)
+        elsif releases_file.is_a? String
+          File.read(releases_file)
+        end
       end
 
       def self.unload
@@ -21,6 +33,10 @@ module Squirrel
 
       def self.all
         @@releases
+      end
+
+      def self.all_json
+        @releases_json.to_json
       end
 
       def self.latest_release

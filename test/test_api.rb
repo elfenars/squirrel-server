@@ -1,5 +1,4 @@
 require 'config/boot'
-
 require 'test/unit'
 require 'model/release'
 
@@ -14,7 +13,7 @@ module Squirrel
     end
 
     def setup
-      Release.load(File.join(File.dirname(__FILE__), 'fixtures', 'releases.json')).first
+      Release.load(File.join(File.dirname(__FILE__), 'fixtures', 'releases.json'))
       @release = Release.latest_release
     end
 
@@ -23,7 +22,7 @@ module Squirrel
     end
 
     def test_release_latest
-      get '/releases/latest'
+      get '/updates/latest'
 
       # Response should be 200 without a version parameter
       assert last_response.ok?
@@ -37,7 +36,7 @@ module Squirrel
     end
 
     def test_time_is_iso8601
-      get '/releases/latest'
+      get '/updates/latest'
 
       body = JSON.parse(last_response.body)
 
@@ -48,13 +47,13 @@ module Squirrel
     end
 
     def test_version_match_yields_204
-      get "/releases/latest?version=#{@release.version}"
+      get "/updates/latest?v=#{@release.version}"
 
       assert_equal 204, last_response.status
     end
 
     def test_expected_types
-      get '/releases/latest'
+      get '/updates/latest'
 
       body = JSON.parse(last_response.body)
 

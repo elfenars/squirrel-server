@@ -1,29 +1,52 @@
 $LOAD_PATH << File.dirname(__FILE__)
 
+require 'net/http'
 require 'config/boot'
-
 require 'logger'
-
 require 'model/release'
 
 if %w(development production).include?(ENV['RACK_ENV'])
-  releases_path = File.join(ENV['RACK_ROOT'], 'db', 'releases.json')
-  Squirrel::Release.load(releases_path) if File.exists?(releases_path)
+  releases_file = if ( ENV['RACK_ENV'] == "production" )
+    URI(ENV["RELEASES_FILE"])
+  else
+    File.join(ENV['RACK_ROOT'], 'db', 'releases.json')
+  end
 
-  Logger.new($stderr).error("No releases available! Add a release to #{releases_path}.") unless Squirrel::Release.all.size > 0
+  Squirrel::Release.load(releases_file)
+  Logger.new($stdout).info("No releases available! Add a release to #{releases_file}.") unless Squirrel::Release.all.size > 0
 end
 
 module Squirrel
   class Api < Sinatra::Base
 
-    get '/releases/latest' do
+    set :logging, true
+
+    get '/updates/latest' do
       release = Release.latest_release
 
-      if release.nil? || release.version == params['version'].to_i
+      version = if ( !params['v'].nil? && params['v'].include?('.') )
+        params['v'].gsub(".", "")
+      else
+        params['v']
+      end
+
+      if release.nil? || release.version == version.to_i
         return [ 204, {}, "" ]
       end
 
       [ 200, {}, release.to_json ]
+    end
+
+    get '/updates/reload' do
+      begin
+        Release.unload
+        Release.load(releases_file)
+      rescue Exception => e
+        puts e
+        [ 500, { message: e } ]
+      end
+
+      return [ 200, "#{Release.all_json}" ]
     end
 
   end

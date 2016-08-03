@@ -7,7 +7,7 @@ gem "rack", "~> 1.5.2"
 gem "rake", "~> 10.1.0"
 
 group :development, :test do
-  gem "debugger", "~> 1.6.2"
+  gem "pry-byebug", "~> 1.1"
 end
 
 group :test do
