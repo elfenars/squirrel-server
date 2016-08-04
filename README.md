@@ -1,6 +1,6 @@
 # Electron Updates
 
-This a minimal Sinatra app meant to handle the updates for the [Quazer Desktop App](https://gitlab.magic-technik.de/pi/Quazer-Desktop).
+This a minimal Sinatra app meant to handle the autoupdates for Electron Apps.
 
 
 # Running locally
