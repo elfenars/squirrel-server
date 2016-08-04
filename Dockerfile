@@ -1,4 +1,10 @@
 FROM ruby:2.1
+
+ARG BUILD_ID=0
+ENV BUILD_ID ${BUILD_ID}
+ARG BUILD_COMMIT=0
+ENV BUILD_COMMIT ${BUILD_COMMIT}
+
 WORKDIR /srv
 ADD . /srv
 RUN mkdir -p tmp/pids tmp/cache tmp/sockets
