@@ -3,6 +3,8 @@ image: 'registry.magic-technik.de/gitlab-ci/alpine-deploy:latest'
 stages:
   - test_build
   - build
+  - tag_qa
+  - deploy_qa
   - tag
   - deploy
 
@@ -29,7 +31,7 @@ test_build_service:
 
 # Rancher
 push_qa:
-  stage: tag
+  stage: tag_qa
   only:
     - master
   script:
@@ -40,7 +42,7 @@ push_qa:
     - ptv
 
 deploy_qa:
-  stage: deploy
+  stage: deploy_qa
   only:
     - master
   script:
