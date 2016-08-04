@@ -1,11 +1,11 @@
-squirrel-server:
+electron-updates:
   environment:
     RACK_ENV: production
     RELEASES_FILE: https://s3-eu-west-1.amazonaws.com/electron-releases/releases.json
   labels:
     io.rancher.container.pull_image: always
   tty: true
-  image: registry.magic-technik.de/ptv/squirrel-server:qa
+  image: registry.magic-technik.de/ptv/electron-updates:qa
   stdin_open: true
 lb:
   ports:
@@ -15,5 +15,5 @@ lb:
   tty: true
   image: rancher/load-balancer-service
   links:
-  - squirrel-server:squirrel-server
+  - electron-updates:electron-updates
   stdin_open: true

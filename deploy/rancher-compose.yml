@@ -1,4 +1,4 @@
-squirrel-server:
+electron-updates:
   scale: 1
 lb:
   load_balancer_config:
