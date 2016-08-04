@@ -1,7 +1,7 @@
 [
   {
     "name": "Quazer App",
-    "version": 010,
+    "version": "010",
     "pub_date": "2016-08-04T00:00:00+00:00",
     "notes": "First release",
     "url": "https://s3-eu-west-1.amazonaws.com/electron-releases/Quazer-0.1.0-mac.zip"

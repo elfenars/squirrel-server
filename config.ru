@@ -6,14 +6,18 @@ require 'logger'
 require 'model/release'
 
 if %w(development production).include?(ENV['RACK_ENV'])
+  $logger = Logger.new($stdout)
+
   releases_file = if ( ENV['RACK_ENV'] == "production" )
+    $logger.info("Using remote file")
     URI(ENV["RELEASES_FILE"])
   else
+    $logger.info("Using local file")
     File.join(ENV['RACK_ROOT'], 'db', 'releases.json')
   end
 
   Squirrel::Release.load(releases_file)
-  Logger.new($stdout).info("No releases available! Add a release to #{releases_file}.") unless Squirrel::Release.all.size > 0
+  $logger.info("No releases available! Add a release to #{releases_file}.") unless Squirrel::Release.all.size > 0
 end
 
 module Squirrel

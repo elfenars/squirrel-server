@@ -13,6 +13,7 @@ before_script:
   - export AWS_SECRET_ACCESS_KEY=$(eval echo \$${TARGET_ENV}_SECRET_KEY)
   - export ECR_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${SERVICE}
   - export TAG=${CI_BUILD_REF}
+  - export RACK_ENV=production
 
 test_build_service:
   stage: test_build

@@ -1,6 +1,4 @@
-FROM ruby:2.1-alpine
-ENV RACK_ENV=production
-
+FROM ruby:2.1
 WORKDIR /srv
 ADD . /srv
 RUN mkdir -p tmp/pids tmp/cache tmp/sockets
