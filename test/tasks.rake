@@ -1,4 +1,4 @@
-require 'config/boot'
+require 'boot'
 
 require 'rake/testtask'
 

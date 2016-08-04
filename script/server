@@ -1,2 +1,2 @@
 #!/bin/bash
-foreman start --port 9393
+bundle exec rackup config.ru --port $RACK_PORT
