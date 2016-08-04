@@ -1,4 +1,7 @@
 squirrel-server:
+  environment:
+    RACK_ENV: production
+    RELEASES_FILE: https://s3-eu-west-1.amazonaws.com/electron-releases/releases.json
   labels:
     io.rancher.container.pull_image: always
   tty: true
@@ -6,11 +9,11 @@ squirrel-server:
   stdin_open: true
 lb:
   ports:
-    - 90:3000
+  - 90:3000
   labels:
     io.rancher.scheduler.global: 'true'
   tty: true
   image: rancher/load-balancer-service
   links:
-    - squirrel-server:squirrel-server
+  - squirrel-server:squirrel-server
   stdin_open: true
