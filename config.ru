@@ -1,3 +1,5 @@
+#\ -s puma
+
 $LOAD_PATH << File.dirname(__FILE__)
 
 require 'net/http'

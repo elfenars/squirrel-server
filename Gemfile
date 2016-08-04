@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "sinatra", "~> 1.4.4", :require => "sinatra/base"
-gem "rack", "~> 1.5.2"
+gem "puma"
 gem "rake", "~> 10.1.0"
 
 group :development, :test do
