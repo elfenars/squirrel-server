@@ -6,11 +6,11 @@ squirrel-server:
   stdin_open: true
 lb:
   ports:
-  - 90:3000
+    - 90:3000
   labels:
     io.rancher.scheduler.global: 'true'
   tty: true
   image: rancher/load-balancer-service
   links:
-  - squirrel-server:squirrel-server
+    - squirrel-server:squirrel-server
   stdin_open: true
