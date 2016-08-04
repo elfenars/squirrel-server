@@ -3,8 +3,6 @@ require 'app/model/release'
 module Squirrel
   class Api < Sinatra::Base
 
-    set :logging, true
-
     get '/updates/latest' do
       release = Release.latest_release
 
