@@ -1,28 +1,16 @@
-# Squirrel Server
+# Electron Updates
 
-This [Rack](http://rack.github.io) application implements the server side
-component for [Squirrel.Mac](https://github.com/Squirrel/Squirrel.Mac). It is
-Heroku compatible and should get you started setting up your own Squirrel
-server.
+This a minimal Sinatra app meant to handle the updates for the [Quazer Desktop App](https://gitlab.magic-technik.de/pi/Quazer-Desktop).
 
-# Bootstrap
-
-Updates are read from `db/releases.json` which is a JSON array of Squirrel
-releases. Add your releases to this file *before* running or deploying.
 
 # Running locally
 
-1. Run `script/bootstrap`.
-1. Run `script/server`
+1. `bundle install`
+2. `bundle exec rackup config.ru --port 3000`
 
-The updates are served locally for testing, to use your local server set your
-update URL host to `localhost:9393` for testing, see
-[Configuring your client](#configuring-your-client).
+In development you will use the `db/releases.json` file.
 
-# Deploying the server
-
-1. Install the [Heroku Toolbelt](https://toolbelt.heroku.com).
-1. Run `script/heroku-deploy` to create the app on Heroku and push the code.
+In production you need to set the RELEASES_FILE env var to a remote file (or local also).
 
 # Configuring your client
 
@@ -32,7 +20,7 @@ updates.
 The example server compares a `version` query parameter to determine whether an
 update is required.
 
-The update resource is `/releases/latest`, configure your client
+The update resource is `/updates/latest`, configure your client
 `SQRLUpdater.updateRequest`:
 
 ```objc
@@ -43,15 +31,23 @@ components.scheme = @"http";
 BOOL useLocalServer = NO;
 if (useLocalServer) {
   components.host = @"localhost";
-  components.port = @(9393);
+  components.port = @(3000);
 } else {
-  components.host = @"my-server.herokuapp.com";
+  components.host = @"my-server.example.com";
 }
 
-components.path = @"/releases/latest";
+components.path = @"/updates/latest";
 
 NSString *bundleVersion = NSBundle.mainBundle.sqrl_bundleVersion;
 components.query = [[NSString stringWithFormat:@"version=%@", bundleVersion] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet]
 
 self.updater = [[SQRLUpdater alloc] initWithUpdateRequest:components.URL];
 ```
+
+# Updating releases.json
+
+When you have updated the `releases.json` file, you need to call /updates/reload in order to reload the file with the new changes.
+
+# Test
+
+Run `script/test`
