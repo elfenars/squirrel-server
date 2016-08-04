@@ -24,13 +24,26 @@ module Squirrel
     get '/updates/reload' do
       begin
         Release.unload
-        Release.load(releases_file)
+        Release.load(RELEASES_FILE)
       rescue Exception => e
-        puts e
-        [ 500, { message: e } ]
+        $logger.error e
+        return 500
       end
 
       return [ 200, "#{Release.all_json}" ]
+    end
+
+    get '/monitor/health' do
+      content_type :json
+      {
+        status:         "OK",
+        env:            ENV['RACK_ENV'],
+        releases_file:  RELEASES_FILE,
+        build:          ENV['BUILD_ID'],
+        commit:         ENV['BUILD_COMMIT'],
+        aws_env:        ENV['AWS_ENV'],
+        cluster:        ENV['CLUSTER']
+      }.to_json
     end
 
   end
