@@ -46,7 +46,7 @@ deploy_qa:
   only:
     - master
   script:
-    - cd deploy/${CI_BUILD_REF_NAME}
+    - cd deploy
     - rancher-compose -p ${SERVICE}-${CI_BUILD_REF_NAME} up -d --upgrade --pull --force-upgrade --batch-size 1
     - rancher-compose -p ${SERVICE}-${CI_BUILD_REF_NAME} up -d --confirm-upgrade
   tags:
