@@ -1,0 +1,24 @@
+lb:
+  ports:
+  - 90:3000
+  labels:
+    io.rancher.scheduler.global: 'true'
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  stdin_open: true
+squirrel-server:
+  environment:
+    RELEASES_FILE: https://s3-eu-west-1.amazonaws.com/electron-releases/releases.json
+    RACK_ENV: production
+    AWS_ENV: qa
+    CLUSTER: rancher
+  log_driver: fluentd
+  labels:
+    io.rancher.container.pull_image: always
+  log_opt:
+    fluentd-address: 172.17.0.1:24224
+    tag: squirrel-server.docker
+  tty: true
+  image: registry.magic-technik.de/ptv/squirrel-server:qa
+  stdin_open: true

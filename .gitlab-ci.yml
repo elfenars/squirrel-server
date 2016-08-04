@@ -1,0 +1,80 @@
+image: 'registry.magic-technik.de/gitlab-ci/alpine-deploy:latest'
+
+stages:
+  - test_build
+  - build
+  - tag
+  - deploy
+
+before_script:
+  - if [ "${CI_BUILD_REF_NAME}" == "master" ];then export TARGET_ENV="int"; else export TARGET_ENV=${CI_BUILD_REF_NAME}; fi
+  - export AWS_ACCOUNT_ID=$(eval echo \$${TARGET_ENV}_ACCOUNT_ID)
+  - export AWS_ACCESS_KEY_ID=$(eval echo \$${TARGET_ENV}_ACCESS_KEY)
+  - export AWS_SECRET_ACCESS_KEY=$(eval echo \$${TARGET_ENV}_SECRET_KEY)
+  - export ECR_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${SERVICE}
+  - export TAG=${CI_BUILD_REF}
+
+test_build_service:
+  stage: test_build
+  only:
+    - master
+  script:
+    - docker build --build-arg BUILD_ID=${CI_BUILD_ID} --build-arg BUILD_COMMIT=${TAG} --tag=${IMAGE}:${TAG} -f Dockerfile .
+    - (sleep 5; docker stop test-${SERVICE}) &
+    - docker run --rm=true --name=test-${SERVICE} -e "RELEASES_FILE=${RELEASES_FILE}" ${IMAGE}:${TAG}
+    - docker push ${IMAGE}:${TAG}
+  tags:
+    - ptv
+
+# Rancher
+push_qa:
+  stage: tag
+  only:
+    - master
+  script:
+    - docker pull ${IMAGE}:${TAG}
+    - docker tag  ${IMAGE}:${TAG} ${IMAGE}:qa
+    - docker push ${IMAGE}:qa
+  tags:
+    - ptv
+
+deploy_qa:
+  stage: deploy
+  only:
+    - master
+  script:
+    - cd deploy/${CI_BUILD_REF_NAME}
+    - rancher-compose -p ${SERVICE}-${CI_BUILD_REF_NAME} up -d --upgrade --pull --force-upgrade --batch-size 1
+    - rancher-compose -p ${SERVICE}-${CI_BUILD_REF_NAME} up -d --confirm-upgrade
+  tags:
+    - ptv
+
+# ECS
+tag_ecs:
+  stage: tag
+  only:
+    - master
+    - sta
+    - lve
+  script:
+    - eval $(aws ecr get-login)
+    - docker pull   ${IMAGE}:${TAG}
+    - docker tag -f ${IMAGE}:${TAG} ${IMAGE}:latest
+    - docker tag -f ${IMAGE}:${TAG} ${ECR_REPO}:${TAG}
+    - docker tag -f ${IMAGE}:${TAG} ${ECR_REPO}:latest
+    - docker push ${IMAGE}:latest
+    - docker push ${ECR_REPO}:${TAG}
+    - docker push ${ECR_REPO}:latest
+  tags:
+    - ptv
+
+deploy_ecs:
+  stage: deploy
+  only:
+    - master
+    - sta
+    - lve
+  script:
+    - ecs-deploy -t 120 --cluster ${ECS_CLUSTER} --service-name ${SERVICE} --image ${ECR_REPO}:latest
+  tags:
+    - ptv

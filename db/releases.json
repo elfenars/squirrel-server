@@ -1,16 +1,9 @@
 [
   {
-    "name": "Test Release",
-    "version": 100,
-    "pub_date": "2013-10-29T12:35:28+00:00",
-    "notes": "Feature Bug fix Improvement",
-    "url": "https://github.com/releases/darwin/app-1.0.0.zip"
-  },
-  {
-    "name": "Test Release 2",
-    "version": 101,
-    "pub_date": "2013-10-29T12:35:28+00:00",
-    "notes": "Feature Bug fix Improvement",
-    "url": "https://github.com/releases/darwin/app-1.0.1.zip"
+    "name": "Quazer App",
+    "version": 010,
+    "pub_date": "2016-08-04T00:00:00+00:00",
+    "notes": "First release",
+    "url": "https://s3-eu-west-1.amazonaws.com/electron-releases/Quazer-0.1.0-mac.zip"
   }
 ]
